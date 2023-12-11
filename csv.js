@@ -41,6 +41,7 @@ function doItAgain(){
                 appendTestCSV();
                 r1.close();
                 doItAgain();
+                break;
             case '6':
                 testOut(userInput);
                 break;
@@ -53,10 +54,9 @@ function doItAgain(){
     });
 }
 
-
 function appendTestCSV() {
   const filename = "testWrite.csv";
-  const writableStream = fs.createWriteStream(filename);
+  const writableStream = fs.createWriteStream(filename, {flags: 'a'});
 
   //sample CSV data
   const d = new Date().toISOString();
