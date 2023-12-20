@@ -17,7 +17,7 @@ const { stringify } = require("csv-stringify");
 doItAgain();
 
 function doItAgain(){
-    const prompt = 'Press:\n1: for reading CSV\n2: for inserting CSV into sqlite3 DB\n3: for writing CSV\n4: for a test CSV write\n5: to append test CSV\n6: to exit\n';
+    const prompt = 'Press:\n1: for reading CSV\n2: for inserting CSV into sqlite3 DB\n3: for writing CSV from DB\n4: for a test CSV write\n5: to append test CSV\n6: to exit\n';
     const r1 = readline.createInterface({
         input: process.stdin,
         output: process.stdout,
@@ -29,10 +29,10 @@ function doItAgain(){
                 readCSV();
                 break;
             case '2':
-                insertCSVDB();
+                insertCSVintoDB();
                 break;
             case '3':
-                writeCSV();
+                writeCSVfromDB();
                 break;
             case '4':
                 testWrite();
@@ -68,9 +68,6 @@ function appendTestCSV() {
   const stringifier = stringify({ delimiter: ',' });
   stringifier.write([ d, testMac, testLat, testLng, testUnc ]);
   stringifier.pipe(writableStream);
-
-  stringifier.end();
-  writableStream.close();
   console.log("Finished appending test CSV data");
 }
 
@@ -95,13 +92,10 @@ function testWrite() {
   const stringifier = stringify({ header: true, columns: columns });
   stringifier.write([ d, testMac, testLat, testLng, testUnc ]);
   stringifier.pipe(writableStream);
-
-  stringifier.end();
-  writableStream.close();
   console.log("Finished inserting test CSV data");
 }
 
-function writeCSV() {
+function writeCSVfromDB() {
   const filename = "saved_from_db.csv";
   const writableStream = fs.createWriteStream(filename);
   const columns = [
@@ -123,13 +117,10 @@ function writeCSV() {
     stringifier.write(row);
   });
   stringifier.pipe(writableStream);
-
-  stringifier.end();
-  writableStream.close();
   console.log("Finished writing data");
 }
 
-function insertCSVDB() {
+function insertCSVintoDB() {
   const db = connectToDatabase();
   fs.createReadStream("./migration_data.csv")
   .pipe(parse({ delimiter: ",", from_line: 2 }))
